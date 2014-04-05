@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AcceptanceTests", "tests\Ac
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "neb", "src\neb\neb.vcxproj", "{5286C3E9-7D79-4B58-9B4D-88BFF0DD1D45}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "googletest", "tests\lib\googletest\googletest.vcxproj", "{0318F66B-01D3-433B-92B2-9A8E4F20993E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{5286C3E9-7D79-4B58-9B4D-88BFF0DD1D45}.Debug|Win32.Build.0 = Debug|Win32
 		{5286C3E9-7D79-4B58-9B4D-88BFF0DD1D45}.Release|Win32.ActiveCfg = Release|Win32
 		{5286C3E9-7D79-4B58-9B4D-88BFF0DD1D45}.Release|Win32.Build.0 = Release|Win32
+		{0318F66B-01D3-433B-92B2-9A8E4F20993E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0318F66B-01D3-433B-92B2-9A8E4F20993E}.Debug|Win32.Build.0 = Debug|Win32
+		{0318F66B-01D3-433B-92B2-9A8E4F20993E}.Release|Win32.ActiveCfg = Release|Win32
+		{0318F66B-01D3-433B-92B2-9A8E4F20993E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
