@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../lib/googletest</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/googletest;$(SolutionDir)src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -68,7 +68,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../lib/googletest</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/googletest;$(SolutionDir)src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,10 +78,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FortranInterfaceTest.cpp" />
     <ClCompile Include="LepsPotentialTest.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\neb\neb.vcxproj">
+      <Project>{5286c3e9-7d79-4b58-9b4d-88bff0dd1d45}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\lib\googletest\googletest.vcxproj">
       <Project>{0318f66b-01d3-433b-92b2-9a8e4f20993e}</Project>
     </ProjectReference>

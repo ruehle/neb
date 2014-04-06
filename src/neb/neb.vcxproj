@@ -10,6 +10,17 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="array.h" />
+    <ClInclude Include="neb.h" />
+    <ClInclude Include="neb_fortran_interface.h" />
+    <ClInclude Include="optimizer.h" />
+    <ClInclude Include="base_potential.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="neb.cpp" />
+    <ClCompile Include="neb_fortran_interface.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5286C3E9-7D79-4B58-9B4D-88BFF0DD1D45}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
