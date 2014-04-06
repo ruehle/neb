@@ -3,6 +3,8 @@
 
 #include "LepsPotential.h"
 
+using namespace pele;
+
 double leps_potential(int ncoords, double *coords, double *grad, void *userdata)
 {
 	if (ncoords != ncoords)
@@ -27,7 +29,10 @@ double leps_potential(int ncoords, double *coords, double *grad, void *userdata)
 
 	LepsPotential *pot = static_cast<LepsPotential *>(userdata);
 
-	return pot->getEnergyGradient(coords, grad);
+	return pot->get_energy_gradient(
+		Array<double>(coords, ncoords),
+		Array<double>(grad, ncoords)
+		);
 }
 
 TEST(FortranInterfaceTest, SetupAndCleanup_GivesNoError)
