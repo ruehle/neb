@@ -1,6 +1,7 @@
 #include <exception>
 #include "neb.h"
 #include <algorithm>
+#include "lbfgs.h"
 
 namespace pele {
 
@@ -238,11 +239,11 @@ void NEB::interpolate_tangent(Array<double> tau, double energy, double energy_le
 
 void NEB::start()
 {
-	/*LBFGS *lbfgs = new LBFGS(this, this->_coords);
+	LBFGS *lbfgs = new LBFGS(this, this->_coords);
 	lbfgs->set_tol(1e-2);
 	lbfgs->set_max_f_rise(0.1);
 
-	_optimizer = lbfgs;*/
+	_optimizer = lbfgs;
 }
 
 

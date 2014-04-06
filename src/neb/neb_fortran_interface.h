@@ -7,4 +7,7 @@ extern "C" {
 
 	void neb_setup(potential_callback_t *potential, void *userdata);
 	void neb_cleanup();
+
+	void neb_start();
+	bool neb_step();
 }

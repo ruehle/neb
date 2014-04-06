@@ -30,12 +30,18 @@
     <ClInclude Include="base_potential.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lbfgs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="neb_fortran_interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="neb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lbfgs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

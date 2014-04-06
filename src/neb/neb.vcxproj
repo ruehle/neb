@@ -12,12 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array.h" />
+    <ClInclude Include="lbfgs.h" />
     <ClInclude Include="neb.h" />
     <ClInclude Include="neb_fortran_interface.h" />
     <ClInclude Include="optimizer.h" />
     <ClInclude Include="base_potential.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lbfgs.cpp" />
     <ClCompile Include="neb.cpp" />
     <ClCompile Include="neb_fortran_interface.cpp" />
   </ItemGroup>
