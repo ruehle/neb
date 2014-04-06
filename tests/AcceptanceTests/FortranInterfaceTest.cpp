@@ -74,6 +74,7 @@ TEST(FortranInterfaceTest, SingleStep_CallsPotential)
 	neb_set_image_coords(0, 1, &x);
 	neb_set_image_coords(1, 1, &x);
 	neb_set_image_coords(2, 1, &x);
+	neb_start();
 	neb_step();
 	neb_cleanup();
 }

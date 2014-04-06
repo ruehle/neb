@@ -5,13 +5,33 @@ using namespace pele;
 
 namespace {
 	NEB *g_neb = nullptr;
+
+	class PotentialWrapper : public BasePotential
+	{
+	public:
+		PotentialWrapper(potential_callback_t *potentialCallback, void *userdata)
+			: _potentialCallback(potentialCallback), _userdata(userdata) {}
+
+		double get_energy(Array<double> x) override
+		{
+			throw std::logic_error("The method or operation is not implemented.");
+		}
+
+		double get_energy_gradient(Array<double> x, Array<double> grad) override
+		{
+			return (*_potentialCallback)(x.size(), x.data(), grad.data(), _userdata);
+		}
+
+		potential_callback_t *_potentialCallback;
+		void *_userdata;
+	};
 }
 
 void neb_setup(potential_callback_t *potential, void *userdata)
 {
 	if (g_neb)
 		throw std::logic_error("neb already initialized");
-	g_neb = new NEB(nullptr);
+	g_neb = new NEB(new PotentialWrapper(potential, userdata));
 }
 
 void neb_cleanup()
