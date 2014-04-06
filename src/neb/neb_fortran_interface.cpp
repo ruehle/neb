@@ -16,8 +16,9 @@ void neb_setup(potential_callback_t *potential, void *userdata)
 
 void neb_cleanup()
 {
-	if (g_neb)
+	if (!g_neb)
 		throw std::logic_error("trying to cleanup neb which was not initialized");
+	delete g_neb;
 	g_neb = nullptr;
 }
 
