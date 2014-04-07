@@ -1,3 +1,5 @@
+#pragma once
+
 #include <neb/base_potential.h>
 #include <cmath>
 
