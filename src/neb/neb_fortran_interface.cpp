@@ -12,12 +12,12 @@ namespace {
 		PotentialWrapper(potential_callback_t *potentialCallback, void *userdata)
 			: _potentialCallback(potentialCallback), _userdata(userdata) {}
 
-		double get_energy(Array<double> x) override
+		double get_energy(Array<double> x)
 		{
 			throw std::logic_error("The method or operation is not implemented.");
 		}
 
-		double get_energy_gradient(Array<double> x, Array<double> grad) override
+		double get_energy_gradient(Array<double> x, Array<double> grad)
 		{
 			return (*_potentialCallback)(x.size(), x.data(), grad.data(), _userdata);
 		}
