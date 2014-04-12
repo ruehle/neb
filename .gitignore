@@ -154,3 +154,12 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+*.mod
+*.a
+CMakeFiles
+AcceptanceTests
+neb_fortran

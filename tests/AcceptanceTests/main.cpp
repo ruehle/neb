@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "gtest/gtest.h"
+#include <gmock/gmock.h>
 
 GTEST_API_ int main(int argc, char **argv) {
 	printf("Running NEB acceptance tests\n");
