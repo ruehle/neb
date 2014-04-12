@@ -30,7 +30,7 @@ namespace {
 void neb_setup(potential_callback_t *potential, void *userdata)
 {
 	if (g_neb)
-		throw std::logic_error("neb already initialized");
+		neb_cleanup();
 	g_neb = new NEB(new PotentialWrapper(potential, userdata));
 }
 
