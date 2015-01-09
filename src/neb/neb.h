@@ -26,6 +26,7 @@ public:
 
 	void start(void);
 	bool step();
+	double get_rms();
 
 	class INEBDistance {
 	public:

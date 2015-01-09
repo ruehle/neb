@@ -110,7 +110,7 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 		// calculate the true gradient
 		_energies[i] = _potential->get_energy_gradient(images[i], _true_gradients[i]);
 		energy += _energies[i];
-		std::cout << "energy " << i << " " << _energies[i] << std::endl;
+		//jdf43 std::cout << "energy " << i << " " << _energies[i] << std::endl;
 	}
 	// update distances and tangents
 	update_distances(images, true);
@@ -155,7 +155,7 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	image_gradients[0].assign(0.0);
 	image_gradients[_nimages-1].assign(0.0);
 
-	//std::cout << "grad" << norm(grad) << std::endl;
+	//jdf43 std::cout << "rms: " << get_rms() << std::endl;
 	return energy;
 }
 
@@ -212,8 +212,8 @@ void NEB::interpolate_tangent(Array<double> tau, double energy, double energy_le
 {      
     // if central point is a maximum or minimum, then interpolate gradients
 	if((energy >= energy_left && energy >= energy_right) || (energy <= energy_left && energy <= energy_right)) {
-		double vmax = std::max(abs(energy - energy_left), abs(energy - energy_right));
-		double vmin = std::min(abs(energy - energy_left), abs(energy - energy_right));
+		double vmax = std::max(std::abs(energy - energy_left), std::abs(energy - energy_right));
+		double vmin = std::min(std::abs(energy - energy_left), std::abs(energy - energy_right));
 
 		if(energy_left > energy_right)
 			for( size_t k=0; k<tau.size(); ++k)				
@@ -240,19 +240,23 @@ void NEB::interpolate_tangent(Array<double> tau, double energy, double energy_le
 void NEB::start()
 {
 	LBFGS *lbfgs = new LBFGS(this, this->_coords);
-	lbfgs->set_tol(1e-2);
+	lbfgs->set_tol(1e0);
 	lbfgs->set_max_f_rise(0.1);
 
 	_optimizer = lbfgs;
 }
 
-
 bool NEB::step()
 {
 	_optimizer->one_iteration();
 	_coords.assign(_optimizer->get_x());
-	std::cout << "energy: " << _optimizer->get_f() << std::endl;
+	//jdf43 std::cout << "energy: " << _optimizer->get_f() << std::endl;
 	return _optimizer->success();
+}
+
+double NEB::get_rms()
+{
+        return _optimizer->get_rms();
 }
 
 }

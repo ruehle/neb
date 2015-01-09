@@ -14,4 +14,5 @@ extern "C" {
 
 	void neb_start();
 	bool neb_step();
+	double neb_rms();
 }

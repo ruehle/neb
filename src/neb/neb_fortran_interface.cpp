@@ -1,3 +1,5 @@
+#include <fenv.h>
+#include <signal.h>
 #include "neb.h"
 #include "neb_fortran_interface.h"
 
@@ -81,5 +83,7 @@ bool neb_step()
 	return g_neb->step();
 }
 
-
-
+double neb_rms()
+{
+        return g_neb->get_rms();
+}
