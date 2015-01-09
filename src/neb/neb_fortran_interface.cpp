@@ -27,13 +27,14 @@ namespace {
 		potential_callback_t *_potentialCallback;
 		void *_userdata;
 	};
+
 }
 
-void neb_setup(potential_callback_t *potential, void *userdata)
+void neb_setup(potential_callback_t *potential, distance_callback_t *distance, void *userdata)
 {
 	if (g_neb)
 		neb_cleanup();
-	g_neb = new NEB(new PotentialWrapper(potential, userdata));
+	g_neb = new NEB(new PotentialWrapper(potential, userdata), new DistanceWrapper(distance));
 }
 
 void neb_cleanup()

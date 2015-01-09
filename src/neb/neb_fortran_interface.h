@@ -5,7 +5,11 @@ extern "C" {
 	typedef double potential_callback_t(int ncoords, double *coords, double *grad, void 
 		*userdata);
 
-	void neb_setup(potential_callback_t *potential, void *userdata);
+	typedef double distance_callback_t(int ncoords, double *left, double *right,
+			double *gradient_left, double *gradient_right);
+
+	void neb_setup(potential_callback_t *potential, distance_callback_t *distance, void *userdata);
+	void neb_distance(distance_callback_t *distance);
 	void neb_cleanup();
 
 	void neb_initialize_path(int nimages, int num_coords_per_image);

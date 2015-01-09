@@ -4,6 +4,7 @@
 #include <vector>
 #include "array.h"
 #include "base_potential.h"
+#include "base_distance.h"
 #include "optimizer.h"
 
 namespace pele {
@@ -11,8 +12,8 @@ namespace pele {
 class NEB : public BasePotential
 {
 public:
-	NEB(BasePotential *potential)
-		: _potential(potential), _k(100.0) { _distance = new CartesianDistance(); }
+	NEB(BasePotential *potential, DistanceWrapper *distance)
+		: _potential(potential), _k(100.0)  { _distance = distance; }
 
 	virtual ~NEB() {};
 
@@ -28,31 +29,6 @@ public:
 	bool step();
 	double get_rms();
 
-	class INEBDistance {
-	public:
-		// this defines the interface for distance calculations in the NEB
-		// the routine is called with the coordinates of the left and right image
-		// and should return the distance between the left and right image.
-		// In addition, it must write its derivatives with respect to the coordinates
-		// of the left and right image in gradient_left and gradient_right, respectively
-		virtual double get_distance(Array<double> left, Array<double> right,
-							Array<double> gradient_left, Array<double> gradient_right) = 0;
-	};
-
-	class CartesianDistance : public INEBDistance{
-	public:
-		double get_distance(Array<double> left, Array<double> right,
-							Array<double> gradient_left, Array<double> gradient_right) {
-			double d=0;
-			for(size_t i=0; i<left.size(); ++i) {
-				d += (right[i] - left[i])*(right[i] - left[i]);
-				gradient_left[i] = -(right[i] - left[i]);
-				gradient_right[i] = right[i] - left[i];
-			}
-			return sqrt(d);
-		}
-	};
-
 protected:
 	// TODO: this function involves the copy constructor of std::vector, is this acceptable?
 	// but it is not too bad since only array views need to be copied, not the actual data
@@ -65,7 +41,7 @@ protected:
 							  Array<double> tau_left, Array<double> tau_right);
 
 	BasePotential *_potential;
-	INEBDistance *_distance;
+	DistanceWrapper *_distance;
 	double _k;
 	bool _double_nudging;
 
