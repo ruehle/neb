@@ -136,9 +136,8 @@ double NEB::get_energy(Array<double> coords)
 	
 	// now loop over all images and sum up the energy
 	double energy = 0.0;
-	for(size_t i=0; i<_images.size(); ++i)
-	{ // sn402
-		double old_energy=energy; // sn402
+	for(size_t i=0; i<_images.size(); ++i) { // sn402
+		double old_energy = energy; // sn402
 		energy += _potential->get_energy(images[i]);
 		std::cout << "Energy for image " << i << " is " << energy-old_energy << std::endl;
 	} // sn402
@@ -163,9 +162,11 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 		= generate_image_views(grad);
 
 	// calculate the true energy and gradient
-	grad.assign(0);
+	grad.assign(0.);
 	double energy = 0.0;
 	for(size_t i=0; i<_images.size(); ++i) {
+	    // js850> NOTE: image 0 and N-1 never change, so we only need
+	    // to compute the energy and gradient once.
 //		std::cout << "Computing energy for image " << i <<"\n";  // sn402
 		//std::cout << "image coordinates";  // sn402
 		//std::cout << images[i];  // sn402
@@ -179,53 +180,56 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	// update distances and tangents
 	update_distances(images, true);
 
+    Array<double> spring(_N);
 	for(size_t i=1; i<_images.size()-1; ++i) {
 
+	    // define some aliases for convenient access
 		Array<double> & tangent = _tangents[i-1];
+        Array<double> & image_gradient = image_gradients[i]; // this is what we're computing
+        Array<double> & true_gradient = _true_gradients[i];
 
 		// perpendicular part of true gradient
-		double project = dot(_true_gradients[i], _tangents[i-1]);
-		for(size_t j=0; j<_N; ++j)
-			image_gradients[i][j] = _true_gradients[i][j] - project*_tangents[i-1][j];
+		double project = dot(true_gradient, tangent);
+		for(size_t j=0; j<_N; ++j) {
+		    image_gradient[j] = true_gradient[j] - project * tangent[j];
+		}
 
 		// double nudging
 		// we first do the double nudging since in this case image_gradient still contains
 		// the perpendicular part of the true gradient which saves an extra storage variable
-		Array<double> spring(_N);
+		spring.assign(0.);
 		if(_double_nudging) {
-			    for(size_t j=0; j<_N; ++j)
+			    for(size_t j=0; j<_N; ++j) {
 					spring[j] = _k*(_tau_left[i-1][j] + _tau_right[i-1][j]);
+			    }
 				std::cout << "spring " << norm(spring) << std::endl;
 				// first project out parallel part since this this is treated separately
 				// in the normal nudging
-				double project1 = dot(spring, _tangents[i-1]);
-				for(size_t j=0; j<_N; ++j)
-					spring[j] -= project1 * _tangents[i-1][j];
+				double project1 = dot(spring, tangent);
+				for(size_t j=0; j<_N; ++j) {
+					spring[j] -= project1 * tangent[j];
+				}
 
 				// project out the part which goes along the direction of the true gradient
-				double project2 = dot(spring,image_gradients[i])/dot(image_gradients[i],image_gradients[i]);
-				for(size_t j=0; j<_N; ++j)
-					spring[j] -= project2*image_gradients[i][j];
+				double project2 = dot(spring, image_gradient)
+				        / dot(image_gradient, image_gradient);
+				for(size_t j=0; j<_N; ++j) {
+					spring[j] -= project2 * image_gradient[j];
+				}
 
                 // add the spring force
-				for(size_t j=0; j<_N; ++j)
-					image_gradients[i][j] += spring[j];
+				image_gradient += spring;
 		}
 
 		// spring force
 		double d = _k * (_distances[i-1] - _distances[i]);
 
-		double temp1 = 0; // rms real grad
-		double temp2 = 0; // rms spring force
-		for(size_t j=0; j<_N; ++j) {
-			temp1 += _true_gradients[i][j]* _true_gradients[i][j];
-			temp2 += (d*_tangents[i-1][j])*(d*_tangents[i-1][j]);
-		}
-		temp1 = sqrt(temp1);
-		temp2 = sqrt(temp2);
+		double temp1 = sqrt(dot(true_gradient, true_gradient));
+		double temp2 = sqrt(dot(tangent, tangent)) * d;
 
-		for(size_t j=0; j<_N; ++j)
-			image_gradients[i][j] += d*_tangents[i-1][j];
+		for(size_t j=0; j<_N; ++j) {
+			image_gradients[i][j] += d * tangent[j];
+		}
 
 		std::cout << _k
 				<< " " << _distances[i-1]
