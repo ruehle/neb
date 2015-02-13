@@ -14,12 +14,15 @@ class NEB : public BasePotential
 public:
 	NEB(BasePotential *potential, DistanceWrapper *distance)
 		: _potential(potential),
+	      _distance(distance),
 		  _k(100.0),
-		  _double_nudging(false),
 		  _adjust_k_tol(.1),
 		  _adjust_k_factor(1.05),
+		  _double_nudging(false),
+		  _nimages(10),
+		  _N(0), // unknown at this point
 	      _verbosity(0),
-	      _distance(distance)
+	      _optimizer(NULL)
     {}
 
 	virtual ~NEB() {};

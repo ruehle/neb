@@ -13,12 +13,14 @@ void NEB::set_path(std::vector< Array<double> > path)
 		throw std::runtime_error("cannot initialize neb with empty path");
 
 	int nimages = _nimages = path.size();
-	int N = _N = path[0].size();
+	size_t N = _N = path[0].size();
 
 	// check if all images have the same number of coordinates
-	for(int i=0; i<nimages; ++i)
-		if(path[i].size() != N) 
+	for(int i=0; i<nimages; ++i) {
+		if(path[i].size() != N) {
 			throw std::runtime_error("number of coordinates in path images differs");
+		}
+	}
 
 	// reset the old image shortcuts and allocate memory to store new path
 	_images.clear();
@@ -55,7 +57,7 @@ void NEB::resize_array_collection(std::vector< Array<double> > &items, size_t si
 	}
 }
 
-void resize_array_vector(vector< Array<double> > &x, int nimages, int n)
+void resize_array_vector(vector< Array<double> > &x, size_t nimages, size_t n)
 {
 	if(x.size() > nimages)
 		x.resize(nimages);
@@ -80,7 +82,7 @@ void NEB::adjust_k()  // sn402
 	// Compute the mean distance between consecutive images
 	std::cout << "Distances:" << std::endl;
 	double average_d = 0;
-	for (int i=0;i<_nimages-1;i++)
+	for (size_t i=0;i<_nimages-1;i++)
 	{
 		std::cout<<_distances[i]<<std::endl;
 		average_d += _distances[i];
@@ -91,8 +93,7 @@ void NEB::adjust_k()  // sn402
 	std::cout << "Deviations:\n";
 	std::vector<double> deviations;
 	double ave_dev = 0;
-	for (int i=0;i<_nimages-1;i++)
-	{
+	for (size_t i=0;i<_nimages-1;i++) {
 		deviations.push_back(fabs((_distances[i]-average_d)/average_d));
 		ave_dev += deviations[i];
 		std::cout<<deviations[i]<<std::endl;
