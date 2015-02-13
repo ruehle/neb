@@ -5,6 +5,10 @@
 
 using namespace pele;
 
+// nullptr is used, but it is only defined in c++11
+#define nullptr NULL;
+
+
 namespace {
 	NEB *g_neb = nullptr;
 
@@ -59,7 +63,7 @@ void neb_initialize_path(int nimages, int num_coords_per_image)
 
 void neb_set_image_coords(int image, int ncoords, const double *coords)
 {
-	auto image_coords = g_neb->images()[image];
+	Array<double> image_coords = g_neb->images()[image];
 //	std::cout << "managed funny line ok\n";  // sn402
 	for (int i = 0; i < ncoords; ++i)
 	{
@@ -80,7 +84,7 @@ void lbfgs_parameters(int M, double max_f_rise, double H0)
 
 void neb_get_image_coords(int image, int ncoords, double *coords)
 {
-	auto image_coords = g_neb->images()[image];
+    Array<double> image_coords = g_neb->images()[image];
 	for (int i = 0; i < ncoords; ++i)
 	{
 		coords[i] = image_coords[i];
@@ -89,7 +93,7 @@ void neb_get_image_coords(int image, int ncoords, double *coords)
 
 void neb_get_image_energies(int nimages, double *energies)  // sn402: added
 {
-	auto image_energies = g_neb->energies();
+    Array<double> image_energies = g_neb->energies();
 	for (int i=0; i<nimages; ++i)
 		energies[i] = image_energies[i];
 }

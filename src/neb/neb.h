@@ -17,8 +17,10 @@ public:
 		  _k(100.0),
 		  _double_nudging(false),
 		  _adjust_k_tol(.1),
-		  _adjust_k_factor(1.05)
-    { _distance = distance; }
+		  _adjust_k_factor(1.05),
+	      _verbosity(0),
+	      _distance(distance)
+    {}
 
 	virtual ~NEB() {};
 
@@ -71,7 +73,7 @@ protected:
 	std::vector< Array<double> > _tau_left, _tau_right;
 	std::vector< Array<double> > _true_gradients;
 
-	int _verbosity = 0;
+	int _verbosity;
 
 	GradientOptimizer *_optimizer;
 };
