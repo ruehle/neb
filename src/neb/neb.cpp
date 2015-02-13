@@ -22,7 +22,7 @@ void NEB::set_path(std::vector< Array<double> > path)
 
 	// reset the old image shortcuts and allocate memory to store new path
 	_images.clear();
-	_coords.resize(N*nimages);
+	_coords = Array<double>(N*nimages);
 
 	// generate array views for quick access
 	for(int i=0, j=0; i<nimages; ++i, j+=N) {
@@ -66,8 +66,8 @@ void resize_array_vector(vector< Array<double> > &x, int nimages, int n)
 
 void NEB::adjust_worker_variables()
 {
-	_energies.resize(_nimages);
-	_distances.resize(_nimages-1);
+	_energies = Array<double>(_nimages);
+	_distances = Array<double>(_nimages-1);
 
 	resize_array_vector(_tangents, _nimages-2, _N);
 	resize_array_vector(_true_gradients, _nimages, _N);
@@ -268,7 +268,7 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 void NEB::update_distances(std::vector< Array<double> > images, bool update_tangent)
 {
 	// adjust array to store distances + tangents
-	_distances.resize(images.size()-1);
+	_distances = Array<double>(images.size()-1);
 	// TODO: this probably won't work
 	//_tangents.resize(images.size()-2);
 
