@@ -50,7 +50,7 @@ namespace pele {
             if (x.size() != grad.size()) {
                 throw std::invalid_argument("grad.size() be the same as x.size()");
             }
-
+            std::cout << "Computing numerical energy gradient. Mistake?"; // sn402
             Array<double> xnew(x.copy());
             for (size_t i=0; i<xnew.size(); ++i){
                 xnew[i] -= eps;

@@ -262,7 +262,7 @@ namespace pele {
          * arrays must be of same size  
          */
 		Array<dtype> &assign(Array<dtype> const & rhs) {
-            if (_size != rhs.size()){
+			if (_size != rhs.size()){
                 throw std::runtime_error("arrays must have the same size during assignment");
             }
             for (size_t i=0; i<_size; ++i)
