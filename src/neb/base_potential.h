@@ -68,7 +68,7 @@ namespace pele {
         virtual void numerical_hessian(Array<double> x, Array<double> hess, double eps=1e-6)
         {
             if (hess.size() != x.size()*x.size()) {
-                throw std::invalid_argument("hess.size() be the same as x.size()");
+                throw std::invalid_argument("hess.size() be the same as x.size()*x.size()");
             }
             size_t const N = x.size();
 
