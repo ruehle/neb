@@ -12,7 +12,7 @@ namespace pele {
 class NEB : public BasePotential
 {
 public:
-	NEB(BasePotential *potential, DistanceWrapper *distance)
+	NEB(BasePotential *potential, BaseDistance *distance)
 		: _potential(potential),
 	      _distance(distance),
 		  _k(100.0),
@@ -57,7 +57,7 @@ protected:
 							  Array<double> tau_left, Array<double> tau_right);
 
 	BasePotential *_potential;
-	DistanceWrapper *_distance;
+	BaseDistance *_distance;
 	double _k;
 
 	double _adjust_k_tol;
