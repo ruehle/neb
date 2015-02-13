@@ -187,6 +187,8 @@ public :
     bool stop_criterion_satisfied()
     {
         if (! func_initialized_) initialize_func_gradient();
+//        std::cout << "Determining whether to terminate" << std::endl; // sn402
+//        std::cout << "rms: " << rms_ << std::endl << "tolerance: " << tol_ << std::endl;
         return rms_ <= tol_;
     }
 
@@ -201,6 +203,7 @@ protected :
         nfev_ += 1;
 
         // pass the arrays to the potential
+        std::cout << "Calling energy gradient\n";
         func = potential_->get_energy_gradient(x, gradient);
     }
 
@@ -212,7 +215,9 @@ protected :
         // compute the func and gradient at the current locations
         // and store them
         size_t N = x_.size();
+        std::cout << "About to compute the gradient for the first time\n"; // sn402
         compute_func_gradient(x_, f_, g_);
+        std::cout << "Gradient computed for the first time\n"; // sn402
         rms_ = norm(g_) / sqrt(N);
         func_initialized_ = true;
     }

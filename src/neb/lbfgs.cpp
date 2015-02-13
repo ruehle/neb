@@ -17,7 +17,6 @@ namespace pele {
 	{
 		// set the precision of the printing
 		cout << std::setprecision(12);
-
 		// allocate space for s_ and y_
 		for (size_t i = 0; i < M_; ++i){
 			s_.push_back(Array<double>(x_.size()));
@@ -32,21 +31,18 @@ namespace pele {
 	{
 		if (!func_initialized_)
 			initialize_func_gradient();
-
+//		std::cout << "gradient" << g_ << std::endl;   // sn402: remove
 		// make a copy of the position and gradient
 		Array<double> xold(x_.copy());
 		Array<double> gold(g_.copy());
-
 		// get the stepsize and direction from the LBFGS algorithm
 		Array<double> step(x_.size());
 		compute_lbfgs_step(step);
-
+//		std::cout << "Step\n" << step << std::endl;
 		// reduce the stepsize if necessary
 		double stepsize = backtracking_linesearch(step);
-
 		// update the LBFGS memeory
 		update_memory(xold, gold, x_, g_);
-
 		// print some status information
 		if ((iprint_ > 0) && (iter_number_ % iprint_ == 0)){
 			cout << "lbgs: " << iter_number_
@@ -71,7 +67,6 @@ namespace pele {
 			y_[klocal][j2] = gnew[j2] - gold[j2];
 			s_[klocal][j2] = xnew[j2] - xold[j2];
 		}
-
 		double ys = dot(y_[klocal], s_[klocal]);
 		if (ys == 0.) {
 			if (verbosity_ > 0) {
@@ -79,8 +74,8 @@ namespace pele {
 			}
 			ys = 1.;
 		}
-
 		rho_[klocal] = 1. / ys;
+		cout << "rho " << rho_ << std::endl;
 
 		double yy = dot(y_[klocal], y_[klocal]);
 		if (yy == 0.) {
@@ -90,7 +85,7 @@ namespace pele {
 			yy = 1.;
 		}
 		H0_ = ys / yy;
-
+		cout << "H0 " << H0_ << std::endl;
 		// increment k
 		k_ += 1;
 	}
@@ -106,12 +101,13 @@ namespace pele {
 			}
 			return;
 		}
-
+//		std::cout << "Gradient at start of compute step:\n"<< std::endl;  // sn402
+//		for(int j2 =0 ; j2<step.size(); j2+=3)
+//			std::cout<<g_[j2]<<"\t"<<g_[j2+1]<<"\t"<<g_[j2+2]<<std::endl;
 		// copy the gradient into step
 		for (size_t j2 = 0; j2 < step.size(); ++j2){
 			step[j2] = g_[j2];
 		}
-
 		int jmin = std::max(0, k_ - M_);
 		int jmax = k_;
 		int i;
@@ -127,7 +123,6 @@ namespace pele {
 				step[j2] -= alpha[i] * y_[i][j2];
 			}
 		}
-
 		// scale the step size by H0
 		for (size_t j2 = 0; j2 < step.size(); ++j2){
 			step[j2] *= H0_;
@@ -206,12 +201,17 @@ namespace pele {
 			}
 		}
 
+//		std::cout<<"Gradient change after lbfgs step:\n";
+//		for(int j2 =0 ; j2<step.size(); j2+=3)
+//			std::cout<<gnew[j2]-g_[j2]<<"\t"<<gnew[j2+1]-g_[j2+1]<<"\t"<<gnew[j2+2]-g_[j2+2]<<std::endl;
+
 		for (size_t i = 0; i < x_.size(); ++i){
 			x_[i] = xnew[i];
 			g_[i] = gnew[i];
 		}
 		f_ = fnew;
 		rms_ = norm(gnew) / sqrt(gnew.size());
+
 		return stepsize * factor;
 	}
 }

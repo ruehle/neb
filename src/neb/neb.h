@@ -13,20 +13,31 @@ class NEB : public BasePotential
 {
 public:
 	NEB(BasePotential *potential, DistanceWrapper *distance)
-		: _potential(potential), _k(100.0)  { _distance = distance; }
+		: _potential(potential),
+		  _k(100.0),
+		  _double_nudging(false),
+		  _adjust_k_tol(.1),
+		  _adjust_k_factor(1.05)
+    { _distance = distance; }
 
 	virtual ~NEB() {};
 
 	void set_path(std::vector< Array<double> > path);
+	void set_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
+			double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity);
+	void set_lbfgs_parameters(int setM, double max_f_rise, double H0);
 
 	double get_energy(Array<double> coords);
 	double get_energy_gradient(Array<double> coords, Array<double> grad);
 
 
 	std::vector< Array<double> > &images() { return _images; }
+	Array<double> &energies() { return _energies; }  // sn402: added
 
-	void start(void);
+	void start(void);  // sn402: deprecated
+	void start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0);  // sn402: added
 	bool step();
+	void adjust_k(); // sn402
 	double get_rms();
 
 protected:
@@ -43,6 +54,10 @@ protected:
 	BasePotential *_potential;
 	DistanceWrapper *_distance;
 	double _k;
+
+	double _adjust_k_tol;
+	double _adjust_k_factor;
+
 	bool _double_nudging;
 
 	Array<double> _coords;
@@ -56,7 +71,9 @@ protected:
 	std::vector< Array<double> > _tau_left, _tau_right;
 	std::vector< Array<double> > _true_gradients;
 
-	Optimizer *_optimizer;
+	int _verbosity = 0;
+
+	GradientOptimizer *_optimizer;
 };
 
 }

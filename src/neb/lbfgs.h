@@ -59,6 +59,7 @@ namespace pele{
 			H0_ = H0;
 		}
 		void set_max_f_rise(double max_f_rise) { max_f_rise_ = max_f_rise; }
+		void set_M(int setM) { M_ = setM; }
 
 		// functions for accessing the results
 		double get_H0() { return H0_; }
