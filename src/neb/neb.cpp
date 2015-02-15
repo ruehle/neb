@@ -260,12 +260,12 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 //
 //	std::cout << "Spring energy 2: " << temp4 <<"\n";
 
-	std::cout << "Gradients\n";
-	for(size_t i=0; i<_images.size()-1; i++) {
-//		std::cout << "Image " << i << std::endl;
-		for (size_t j=0; j<_N; j+=3)
-			std::cout << grad[i*_N+j] << "\t" << grad[i*_N+j+1] << "\t" <<grad[i*_N+j+2] << std::endl;
-	}
+//	std::cout << "Gradients\n";
+//	for(size_t i=0; i<_images.size()-1; i++) {
+////		std::cout << "Image " << i << std::endl;
+//		for (size_t j=0; j<_N; j+=3)
+//			std::cout << grad[i*_N+j] << "\t" << grad[i*_N+j+1] << "\t" <<grad[i*_N+j+2] << std::endl;
+//	}
 	//jdf43 std::cout << "rms: " << get_rms() << std::endl;
 	return energy;//+temp3;
 }

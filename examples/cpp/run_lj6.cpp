@@ -6,6 +6,7 @@
 #include <iterator>
 #include <ctime>
 #include <random>
+#include <sstream>
 
 
 #include "lj.h"
@@ -39,14 +40,30 @@ std::vector< Array<double> > linear_interpoloation(Array<double> xi, Array<doubl
     Array<double> x(xi.size());
 
     for (size_t i = 1; i < nimages-1; ++i) {
+        double f = double(i) / (nimages-1);
         for (size_t k = 0; k < xi.size(); ++k) {
-            double f = double(i) / (nimages-1);
-            x[k] = xi[k] + f * (xi[k] - xf[k]);
-            path.push_back(x.copy());
+            x[k] = xi[k] + f * (xf[k] - xi[k]);
         }
+        path.push_back(x.copy());
     }
     path.push_back(xf.copy());
     return path;
+}
+
+void print_EofS(Array<double> energies,
+        Array<double> distances,
+        size_t count)
+{
+    std::stringstream ss;
+    ss << "neb.EofS." << count;
+
+    std::ofstream fout(ss.str());
+    double cum_dist = 0;
+    for (size_t i = 0; i < energies.size(); ++i) {
+        fout << cum_dist << " " << energies[i] << "\n";
+        cum_dist += distances[i];
+    }
+    fout.close();
 }
 
 int main()
@@ -57,17 +74,36 @@ int main()
     Array<double> xf = Array<double>(v).copy();
 
     cout << "hi\n";
-    cout << xf << std::endl;
+    cout << xf.size() << std::endl;
+
 
     pele::LJ lj(4., 4.);
     pele::CartesianNEBDistance neb_dist;
 
+    cout << "energy1 " << lj.get_energy(xi) << std::endl;
+    cout << "energy2 " << lj.get_energy(xf) << std::endl;
+
     pele::NEB neb(&lj, &neb_dist);
 
-    auto path = linear_interpoloation(xi, xf, 5);
+    auto path = linear_interpoloation(xi, xf, 10);
     neb.set_path(path);
 
-    neb.start_with_lbfgs(.1, 10, 1., .01);
-    neb.step();
+//    for (auto x : path) {
+//        cout << "size " << x.size() << std::endl;
+//        cout << "energy_path " << lj.get_energy(x) << std::endl;
+//    }
+
+    neb.start_with_lbfgs(1e-3, 10, 1., .01);
+
+    for (size_t i = 0; i < 50; ++i) {
+        bool success = neb.step();
+
+
+        if (success) break;
+        if (i % 1 == 0.) {
+            print_EofS(neb.get_true_energies(), neb.get_distancese(), i);
+        }
+    }
+
 
 }

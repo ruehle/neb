@@ -46,8 +46,8 @@ class CartesianNEBDistance : public BaseDistance {
         dr -= right;
         double d = norm(dr);
         for (size_t i = 0; i < left.size(); ++i) {
-            gradient_left[i] = left[i] / d;
-            gradient_right[i] = -left[i] / d;
+            gradient_left[i] = (left[i] - right[i]) / d;
+            gradient_right[i] = (right[i] - left[i]) / d;
         }
         return d;
     }
