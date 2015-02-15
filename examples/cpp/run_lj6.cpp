@@ -68,9 +68,9 @@ void print_EofS(Array<double> energies,
 
 int main()
 {
-    auto v = vector_from_file("../lj6_m1");
+    auto v = vector_from_file("../lj13_m1");
     Array<double> xi = Array<double>(v).copy();
-    v = vector_from_file("../lj6_m2");
+    v = vector_from_file("../lj13_m2");
     Array<double> xf = Array<double>(v).copy();
 
     cout << "hi\n";
@@ -85,8 +85,11 @@ int main()
 
     pele::NEB neb(&lj, &neb_dist);
 
-    auto path = linear_interpoloation(xi, xf, 10);
+    auto path = linear_interpoloation(xi, xf, 30);
     neb.set_path(path);
+    neb.set_k(100.);
+    neb.set_double_nudging(true);
+    neb.set_verbosity(10);
 
 //    for (auto x : path) {
 //        cout << "size " << x.size() << std::endl;
@@ -95,14 +98,20 @@ int main()
 
     neb.start_with_lbfgs(1e-3, 10, 1., .01);
 
-    for (size_t i = 0; i < 50; ++i) {
+    for (size_t i = 0; i < 500; ++i) {
         bool success = neb.step();
 
 
-        if (success) break;
-        if (i % 1 == 0.) {
+        if (i % 10 == 0.) {
             print_EofS(neb.get_true_energies(), neb.get_distancese(), i);
         }
+
+        if (i % 5 == 0.) {
+            neb.adjust_k();
+        }
+
+
+        if (success) break;
     }
 
 

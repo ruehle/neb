@@ -9,14 +9,15 @@ namespace pele {
 void NEB::set_path(std::vector< Array<double> > path)
 {
 	// check if there are images in the path
-	if(path.size() == 0)
+	if(path.size() == 0) {
 		throw std::runtime_error("cannot initialize neb with empty path");
+	}
 
 	int nimages = _nimages = path.size();
 	size_t N = _N = path[0].size();
 
 	// check if all images have the same number of coordinates
-	for(int i=0; i<nimages; ++i) {
+	for(int i=0; i < path.size(); ++i) {
 		if(path[i].size() != N) {
 			throw std::runtime_error("number of coordinates in path images differs");
 		}
@@ -38,8 +39,6 @@ void NEB::set_path(std::vector< Array<double> > path)
 	// update all variables where the work is performed in
 	// e.g. distances, tangent vectors, ...
 	adjust_worker_variables();
-	_nimages = nimages;
-	_N = N;
 //	std::cout << "Path set up\n";
 //	for (int i=0; i<nimages;i++) {
 //		for(int j=0; j<N;j+=3) {
@@ -48,21 +47,14 @@ void NEB::set_path(std::vector< Array<double> > path)
 //	}
 }
 
-void NEB::resize_array_collection(std::vector< Array<double> > &items, size_t size, size_t nelements)
-{
-	if(items.size() > size) {
-		items.resize(size);
-	} else while(items.size() < size-2) {
-		items.push_back(Array<double>(nelements));
-	}
-}
-
 void resize_array_vector(vector< Array<double> > &x, size_t nimages, size_t n)
 {
-	if(x.size() > nimages)
+	if(x.size() > nimages) {
 		x.resize(nimages);
-	else while(x.size() < nimages) {
-		x.push_back(Array<double>(n));
+	} else {
+	    while(x.size() < nimages) {
+            x.push_back(Array<double>(n));
+        }
 	}
 }
 
@@ -81,40 +73,33 @@ void NEB::adjust_k()  // sn402
 {
 	// Compute the mean distance between consecutive images
 	std::cout << "Distances:" << std::endl;
-	double average_d = 0;
-	for (size_t i=0;i<_nimages-1;i++)
-	{
-		std::cout<<_distances[i]<<std::endl;
-		average_d += _distances[i];
-	}
-	average_d /= (_nimages-1);
+	double average_d = _distances.sum() / _distances.size();
 	std::cout << "Average distance: " << average_d << std::endl;
 	// Compute the average deviation of the distances (normalised to the average distance)
 	std::cout << "Deviations:\n";
-	std::vector<double> deviations;
 	double ave_dev = 0;
-	for (size_t i=0;i<_nimages-1;i++) {
-		deviations.push_back(fabs((_distances[i]-average_d)/average_d));
-		ave_dev += deviations[i];
-		std::cout<<deviations[i]<<std::endl;
+	for (size_t i=0; i < _distances.size(); i++) {
+		double deviation = fabs((_distances[i]-average_d)/average_d);
+		ave_dev += deviation;
+//		std::cout << deviation << std::endl;
 	}
-	ave_dev /= (_nimages-1);
+	ave_dev /= _distances.size();
+	cout << "average deviation " << ave_dev << "\n";
 
 	// If this average deviation is larger than a specified tolerance, the band is too loose
 	// so we increase the force constant. If the deviation is smaller, we relax the force constant.
-	if (ave_dev > _adjust_k_tol)
-	{
+	if (ave_dev > _adjust_k_tol) {
 		_k *= _adjust_k_factor;
-		if (_verbosity > 0)
+		if (_verbosity > 0) {
 			std::cout << "Increasing NEB force constant to " << _k <<
 					" (average deviation is " << ave_dev << ")" << std::endl;
-	}
-	else
-	{
+		}
+	} else {
 		_k /= _adjust_k_factor;
-		if (_verbosity > 0)
+		if (_verbosity > 0) {
 			std::cout << "Decreasing NEB force constant to " << _k <<
 					" (average deviation is " << ave_dev << ")" << std::endl;
+		}
 	}
 
 }
@@ -123,8 +108,9 @@ std::vector< Array<double> > NEB::generate_image_views(Array<double> coords)
 {
 	std::vector< Array<double> > images;
 	// generate array views for quick access
-	for(size_t i=0; i<_nimages; ++i)
+	for(size_t i=0; i<_nimages; ++i) {
 		images.push_back(coords.view(i*_N, (i+1)*_N));
+	}
 	return images;
 }
 
@@ -168,14 +154,9 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	for(size_t i=0; i<_images.size(); ++i) {
 	    // js850> NOTE: image 0 and N-1 never change, so we only need
 	    // to compute the energy and gradient once.
-//		std::cout << "Computing energy for image " << i <<"\n";  // sn402
-		//std::cout << "image coordinates";  // sn402
-		//std::cout << images[i];  // sn402
 		// calculate the true gradient
 		_energies[i] = _potential->get_energy_gradient(images[i], _true_gradients[i]);
 		energy += _energies[i];
-		//jdf43
-//		std::cout << "energy " << i << " " << _energies[i] << std::endl;  // sn402
 	}
 
 	// update distances and tangents
@@ -198,48 +179,47 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 		// double nudging
 		// we first do the double nudging since in this case image_gradient still contains
 		// the perpendicular part of the true gradient which saves an extra storage variable
-		spring.assign(0.);
 		if(_double_nudging) {
-			    for(size_t j=0; j<_N; ++j) {
-					spring[j] = _k*(_tau_left[i-1][j] + _tau_right[i-1][j]);
-			    }
-				std::cout << "spring " << norm(spring) << std::endl;
-				// first project out parallel part since this this is treated separately
-				// in the normal nudging
-				double project1 = dot(spring, tangent);
-				for(size_t j=0; j<_N; ++j) {
-					spring[j] -= project1 * tangent[j];
-				}
+            spring.assign(0.);
+            for(size_t j=0; j<_N; ++j) {
+                spring[j] = _k * (_tau_left[i-1][j] + _tau_right[i-1][j]);
+            }
+            // first project out parallel part since this this is treated separately
+            // in the normal nudging
+            double project1 = dot(spring, tangent);
+            for(size_t j=0; j<_N; ++j) {
+                spring[j] -= project1 * tangent[j];
+            }
 
-				// project out the part which goes along the direction of the true gradient
-				double project2 = dot(spring, image_gradient)
-				        / dot(image_gradient, image_gradient);
-				for(size_t j=0; j<_N; ++j) {
-					spring[j] -= project2 * image_gradient[j];
-				}
+            // project out the part which goes along the direction of the true gradient
+            double project2 = dot(spring, image_gradient)
+                    / dot(image_gradient, image_gradient);
+            for(size_t j=0; j<_N; ++j) {
+                spring[j] -= project2 * image_gradient[j];
+            }
 
-                // add the spring force
-				image_gradient += spring;
+            // add the spring force
+            image_gradient += spring;
 		}
 
 		// spring force
 		double d = _k * (_distances[i-1] - _distances[i]);
 
-		double temp1 = sqrt(dot(true_gradient, true_gradient));
-		double temp2 = sqrt(dot(tangent, tangent)) * d;
 
 		for(size_t j=0; j<_N; ++j) {
-			image_gradients[i][j] += d * tangent[j];
+		    image_gradient[j] += d * tangent[j];
 		}
 
-		std::cout << _k
-				<< " " << _distances[i-1]
-				<< " " << _distances[i]
-				<< " " << _distances[i-1] - _distances[i]
-				<< " " << d
-				<< " " << temp1
-				<< " " << temp2
-				<< std::endl;
+//		double temp1 = sqrt(dot(true_gradient, true_gradient));
+//		double temp2 = sqrt(dot(tangent, tangent)) * d;
+//		std::cout << _k
+//				<< " " << _distances[i-1]
+//				<< " " << _distances[i]
+//				<< " " << _distances[i-1] - _distances[i]
+//				<< " " << d
+//				<< " " << temp1
+//				<< " " << temp2
+//				<< std::endl;
 
 	}
 

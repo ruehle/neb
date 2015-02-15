@@ -19,8 +19,8 @@ public:
 		  _adjust_k_tol(.1),
 		  _adjust_k_factor(1.05),
 		  _double_nudging(false),
-		  _nimages(10),
-		  _N(0), // unknown at this point
+		  _nimages(2), // unknown until set_path is called
+		  _N(1), // unknown until set_path is called
 	      _verbosity(0),
 	      _optimizer(NULL)
     {}
@@ -43,10 +43,14 @@ public:
 	void start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0);  // sn402: added
 	bool step();
 	void adjust_k(); // sn402
-	double get_rms();
+
+	void set_k(double k) { _k = k; }
+	void set_double_nudging(bool on_off) { _double_nudging = on_off; }
+	void set_verbosity(int verbosity) { _verbosity = verbosity; }
 
     Array<double> get_true_energies() { return _energies; }
     Array<double> get_distancese() { return _distances; }
+	double get_rms();
 
 protected:
 	// TODO: this function involves the copy constructor of std::vector, is this acceptable?
@@ -54,7 +58,6 @@ protected:
     // js850> it should be fine.  See http://stackoverflow.com/questions/19454068/c-return-value-optimization
 	std::vector< Array<double> > generate_image_views(Array<double> coords);
 
-	void resize_array_collection(std::vector< Array<double> > &items, size_t size, size_t nelements);
 	void adjust_worker_variables();
 	void update_distances(std::vector< Array<double> > images, bool update_tangents=true);
 	void interpolate_tangent(Array<double> tau, double energy, double energy_left, double energy_right, 
