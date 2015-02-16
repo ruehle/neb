@@ -5,6 +5,10 @@
 
 using namespace pele;
 
+// nullptr is used, but it is only defined in c++11
+#define nullptr NULL;
+
+
 namespace {
 	NEB *g_neb = nullptr;
 
@@ -47,6 +51,8 @@ void neb_cleanup()
 
 void neb_initialize_path(int nimages, int num_coords_per_image)
 {
+	std::cout << "nimages in initialise_path: " << nimages << std::endl;
+	std::cout << "number of coords per image: " << num_coords_per_image << std::endl;
 	vector < Array<double> > path;
 	Array<double> image(num_coords_per_image, 0);
 	for (int i = 0; i < nimages; ++i) {
@@ -57,31 +63,61 @@ void neb_initialize_path(int nimages, int num_coords_per_image)
 
 void neb_set_image_coords(int image, int ncoords, const double *coords)
 {
-	auto image_coords = g_neb->images()[image];
+	Array<double> image_coords = g_neb->images()[image];
+//	std::cout << "managed funny line ok\n";  // sn402
 	for (int i = 0; i < ncoords; ++i)
 	{
 		image_coords[i] = coords[i];
 	}
 }
 
+void neb_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
+		double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity)
+{
+	g_neb->set_parameters(double_nudging, rmstol, k_initial, adjust_k_tol, adjust_k_factor, maxstep, maxiter, iprint, verbosity);
+}
+
+void lbfgs_parameters(int M, double max_f_rise, double H0)
+{
+	g_neb->set_lbfgs_parameters(M, max_f_rise, H0);
+}
+
 void neb_get_image_coords(int image, int ncoords, double *coords)
 {
-	auto image_coords = g_neb->images()[image];
+    Array<double> image_coords = g_neb->images()[image];
 	for (int i = 0; i < ncoords; ++i)
 	{
 		coords[i] = image_coords[i];
 	}
 }
 
+void neb_get_image_energies(int nimages, double *energies)  // sn402: added
+{
+    Array<double> image_energies = g_neb->energies();
+	for (int i=0; i<nimages; ++i)
+		energies[i] = image_energies[i];
+}
 
-void neb_start()
+void neb_start()  // sn402: this should be superseded by a start function that specifies
+				  // the desired optimizer (currently only lbfgs is coded).
 {
 	g_neb->start();
 }
 
+void neb_start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0)  // sn402: added
+{
+	g_neb->start_with_lbfgs(rmstol, setM, max_f_rise, H0);
+}
+
+
 bool neb_step()
 {
 	return g_neb->step();
+}
+
+void neb_adjust_k()
+{
+	g_neb->adjust_k();
 }
 
 double neb_rms()
