@@ -8,7 +8,7 @@
 #include "array.h"
 #include "neb_fortran_interface.h"
 
-namespace pele {
+namespace cpp_neb {
 	class BaseDistance {
 	public:
 		virtual ~BaseDistance() {}

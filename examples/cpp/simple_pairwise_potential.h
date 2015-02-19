@@ -6,7 +6,7 @@
 #include "distance.h"
 #include <memory>
 
-namespace pele
+namespace cpp_neb
 {
 /**
  * Define a base class for potentials with simple pairwise interactions that

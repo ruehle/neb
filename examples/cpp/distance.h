@@ -1,5 +1,5 @@
-#ifndef _PELE_DISTANCE_H
-#define _PELE_DISTANCE_H
+#ifndef _CPP_DISTANCE_H
+#define _CPP_DISTANCE_H
 
 #include <cmath>
 #include <stdexcept>
@@ -36,7 +36,7 @@
  * http://www.itp.phys.ethz.ch/education/hs12/programming_techniques
  */
 
-namespace pele {
+namespace cpp_neb {
 
 class CartesianNEBDistance : public BaseDistance {
     virtual double get_distance(Array<double> left, Array<double> right,
@@ -234,5 +234,5 @@ public:
     }
 };
 
-} // namespace pele
-#endif // #ifndef _PELE_DISTANCE_H
+} // namespace cpp_neb
+#endif // #ifndef _CPP_DISTANCE_H

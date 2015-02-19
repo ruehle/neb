@@ -14,7 +14,7 @@
 #include "distance.h"
 #include "neb.h"
 
-using pele::Array;
+using cpp_neb::Array;
 using std::cout;
 
 std::vector<double> vector_from_file(std::string fname)
@@ -77,15 +77,20 @@ int main()
     cout << xf.size() << std::endl;
 
 
-    pele::LJ lj(4., 4.);
-    pele::CartesianNEBDistance neb_dist;
+    cpp_neb::LJ lj(4., 4.);
+    cpp_neb::CartesianNEBDistance neb_dist;
 
     cout << "energy1 " << lj.get_energy(xi) << std::endl;
     cout << "energy2 " << lj.get_energy(xf) << std::endl;
 
-    pele::NEB neb(&lj, &neb_dist);
+    cpp_neb::NEB neb(&lj, &neb_dist);
 
     auto path = linear_interpoloation(xi, xf, 30);
+ 
+    for(int i=0; i<30; i++) {
+      for(int j=0; j<13; j++)
+	std::cout<< path[i][3*j] << " " << path[i][3*j+1] << " " << path[i][3*j+2] << "\n";
+    }
     neb.set_path(path);
     neb.set_k(100.);
     neb.set_double_nudging(true);
@@ -103,7 +108,7 @@ int main()
 
 
         if (i % 10 == 0.) {
-            print_EofS(neb.get_true_energies(), neb.get_distancese(), i);
+            print_EofS(neb.get_true_energies(), neb.get_distances(), i);
         }
 
         if (i % 5 == 0.) {

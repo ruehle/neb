@@ -20,7 +20,6 @@ extern "C" {
 	void neb_get_image_energies(int nimages, double *energies);
 	void neb_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
 			double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity);
-	void lbfgs_parameters(int M, double max_f_rise, double H0);
 
 	void neb_start();  // sn402: this should be superseded by a start function that specifies
 	// the desired optimizer (currently only lbfgs is coded).

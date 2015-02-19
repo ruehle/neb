@@ -2,7 +2,7 @@ import numpy as np
 from pele.systems import LJCluster
 from pele.utils.xyz import write_xyz
 
-natoms=13
+natoms=38
 system = LJCluster(natoms)
 db = system.create_database()
 bh = system.get_basinhopping(db)
@@ -19,6 +19,5 @@ else:
 
 #write_xyz(open("lj6_m1.xyz", "w"), x1)
 #write_xyz(open("lj6_m2.xyz", "w"), x2)
-
-np.savetxt("lj{}_m1".format(natoms), x1)
-np.savetxt("lj{}_m2".format(natoms), x2)
+np.savetxt("lj{}_m1".format(natoms), x1.reshape(-1,3))
+np.savetxt("lj{}_m2".format(natoms), x2.reshape(-1,3))

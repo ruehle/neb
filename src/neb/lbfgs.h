@@ -1,5 +1,5 @@
-#ifndef _PELE_LBFGS_H__
-#define _PELE_LBFGS_H__
+#ifndef _CPP_LBFGS_H__
+#define _CPP_LBFGS_H__
 
 #include <vector>
 #include "base_potential.h"
@@ -8,7 +8,7 @@
 
 using std::vector;
 
-namespace pele{
+namespace cpp_neb{
 	/**
 	 * An implementation of the LBFGS optimization algorithm in c++.  This
 	 * Implementation uses a backtracking linesearch.
@@ -42,8 +42,8 @@ namespace pele{
 		 * Constructor
 		 */
 		LBFGS(
-			pele::BasePotential * potential,
-			const pele::Array<double> x0,
+			cpp_neb::BasePotential * potential,
+			const cpp_neb::Array<double> x0,
 			double tol = 1e-4,
 			int M = 4
 			);

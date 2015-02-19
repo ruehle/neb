@@ -1,10 +1,10 @@
 #include "lbfgs.h"
 
-namespace pele {
+namespace cpp_neb {
 
 	LBFGS::LBFGS(
-		pele::BasePotential * potential,
-		const pele::Array<double> x0,
+		cpp_neb::BasePotential * potential,
+		const cpp_neb::Array<double> x0,
 		double tol,
 		int M)
 		:
@@ -31,14 +31,15 @@ namespace pele {
 	{
 		if (!func_initialized_)
 			initialize_func_gradient();
-//		std::cout << "gradient" << g_ << std::endl;   // sn402: remove
+
 		// make a copy of the position and gradient
 		Array<double> xold(x_.copy());
 		Array<double> gold(g_.copy());
+
 		// get the stepsize and direction from the LBFGS algorithm
 		Array<double> step(x_.size());
 		compute_lbfgs_step(step);
-//		std::cout << "Step\n" << step << std::endl;
+
 		// reduce the stepsize if necessary
 		double stepsize = backtracking_linesearch(step);
 		// update the LBFGS memeory
@@ -46,7 +47,7 @@ namespace pele {
 		// print some status information
 		if ((iprint_ > 0) && (iter_number_ % iprint_ == 0)){
 			cout << "lbgs: " << iter_number_
-				<< " E " << f_
+//				<< " E " << f_       // sn402: This isn't a real energy - see note in neb.cpp
 				<< " rms " << rms_
 				<< " nfev " << nfev_
 				<< " stepsize " << stepsize << "\n";
@@ -75,7 +76,7 @@ namespace pele {
 			ys = 1.;
 		}
 		rho_[klocal] = 1. / ys;
-		cout << "rho " << rho_ << std::endl;
+//		cout << "rho " << rho_ << std::endl;
 
 		double yy = dot(y_[klocal], y_[klocal]);
 		if (yy == 0.) {
@@ -85,7 +86,7 @@ namespace pele {
 			yy = 1.;
 		}
 		H0_ = ys / yy;
-		cout << "H0 " << H0_ << std::endl;
+//		cout << "H0 " << H0_ << std::endl;
 		// increment k
 		k_ += 1;
 	}

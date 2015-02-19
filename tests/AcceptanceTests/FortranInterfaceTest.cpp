@@ -3,7 +3,7 @@
 
 #include "LepsPotential.h"
 
-using namespace pele;
+using namespace cpp_neb;
 using namespace testing;
 
 

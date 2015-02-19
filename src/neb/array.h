@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace pele {
+namespace cpp_neb {
 
 /**
  * This manages the data of the Array class.  This can act as a simple wrapper for a
@@ -461,6 +461,6 @@ Array<T> operator*(const U rhs, const Array<T>& lhs)
     return (result *= rhs).copy();
 }
 
-} // namespace pele
+} // namespace cpp_neb
 
 #endif // #ifndef PYGMIN_ARRAY_H
