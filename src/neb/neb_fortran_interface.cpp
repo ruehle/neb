@@ -3,7 +3,7 @@
 #include "neb.h"
 #include "neb_fortran_interface.h"
 
-using namespace pele;
+using namespace cpp_neb;
 
 // nullptr is used, but it is only defined in c++11
 #define nullptr NULL;
@@ -51,8 +51,8 @@ void neb_cleanup()
 
 void neb_initialize_path(int nimages, int num_coords_per_image)
 {
-	std::cout << "nimages in initialise_path: " << nimages << std::endl;
-	std::cout << "number of coords per image: " << num_coords_per_image << std::endl;
+//	std::cout << "nimages in initialise_path: " << nimages << std::endl;
+//	std::cout << "number of coords per image: " << num_coords_per_image << std::endl;
 	vector < Array<double> > path;
 	Array<double> image(num_coords_per_image, 0);
 	for (int i = 0; i < nimages; ++i) {
@@ -73,12 +73,21 @@ void neb_set_image_coords(int image, int ncoords, const double *coords)
 void neb_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
 		double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity)
 {
-	g_neb->set_parameters(double_nudging, rmstol, k_initial, adjust_k_tol, adjust_k_factor, maxstep, maxiter, iprint, verbosity);
-}
+	if (double_nudging==0) {
+		g_neb->set_double_nudging(false);
+	} else {
+		g_neb->set_double_nudging(true);
+	}
 
-void lbfgs_parameters(int M, double max_f_rise, double H0)
-{
-	g_neb->set_lbfgs_parameters(M, max_f_rise, H0);
+	g_neb->set_k(k_initial);
+	g_neb->set_k_tol(adjust_k_tol);
+	g_neb->set_k_factor(adjust_k_factor);
+	g_neb->set_verbosity(verbosity);
+
+	g_neb->get_optimizer()->set_tol(rmstol);
+	g_neb->get_optimizer()->set_max_iter(maxiter);
+	g_neb->get_optimizer()->set_maxstep(maxstep);
+	g_neb->get_optimizer()->set_iprint(iprint);
 }
 
 void neb_get_image_coords(int image, int ncoords, double *coords)

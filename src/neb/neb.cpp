@@ -4,7 +4,7 @@
 #include "lbfgs.h"
 #include <cmath>
 
-namespace pele {
+namespace cpp_neb {
 
 void NEB::set_path(std::vector< Array<double> > path)
 {
@@ -39,12 +39,6 @@ void NEB::set_path(std::vector< Array<double> > path)
 	// update all variables where the work is performed in
 	// e.g. distances, tangent vectors, ...
 	adjust_worker_variables();
-//	std::cout << "Path set up\n";
-//	for (int i=0; i<nimages;i++) {
-//		for(int j=0; j<N;j+=3) {
-//			std::cout << _images[i][j] << "\t" << _images[i][j+1] << "\t" _images[i][j+2] << std::endl;
-//		}
-//	}
 }
 
 void resize_array_vector(vector< Array<double> > &x, size_t nimages, size_t n)
@@ -68,6 +62,13 @@ void NEB::adjust_worker_variables()
 	resize_array_vector(_tau_left, _nimages, _N);
 	resize_array_vector(_tau_right, _nimages, _N);
 }
+
+/**
+ * Compute the average deviation of the distances between consecutive images in the path.
+ * If this deviation is larger than a specified tolerance, k is increased to tighten the band and
+ * encourage an even distribution of image. Otherwise, k is decreased to loosen the band and allow exploration
+ * of longer paths.
+ */
 
 void NEB::adjust_k()  // sn402
 {
@@ -134,7 +135,7 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	if (coords.size() != _N * _nimages) {
 		throw std::runtime_error("coords has the wrong size");
 	}
-	std::cout << "cpp energy gradient function\n";  // sn402
+//	std::cout << "cpp energy gradient function\n";  // sn402
 
 	// first wrap coordinates for convenient access
 	std::vector< Array<double> > images
@@ -158,12 +159,15 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	update_distances(images, true);
 
     Array<double> spring(_N);
+//    double E_neb = 0;   // sn402: this will hold the spring contribution to the energy
+
 	for(size_t i=1; i<_images.size()-1; ++i) {
 
 	    // define some aliases for convenient access
 		Array<double> & tangent = _tangents[i-1];
         Array<double> & image_gradient = image_gradients[i]; // this is what we're computing
         Array<double> & true_gradient = _true_gradients[i];
+
 
 		// perpendicular part of true gradient
 		double project = dot(true_gradient, tangent);
@@ -179,6 +183,8 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
             for(size_t j=0; j<_N; ++j) {
                 spring[j] = _k * (_tau_left[i-1][j] + _tau_right[i-1][j]);
             }
+//            E_neb += dot(spring, spring)/(2*_k);  // sn402: spring energy  - this doesn't seem to work
+
             // first project out parallel part since this this is treated separately
             // in the normal nudging
             double project1 = dot(spring, tangent);
@@ -222,7 +228,13 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	image_gradients[_nimages-1].assign(0.0);
 
 	//jdf43 std::cout << "rms: " << get_rms() << std::endl;
-	return energy;//+temp3;
+
+	// sn402: The lbfgs algorithm uses the "energy" returned from this function to reject steps that would
+	// increase the total energy by more than a specified amount. However here the energy would have to take
+	// into account the spring force as well. In practise it becomes simpler to return a nominal "energy"
+	// of 0, so that all steps are accepted (in effect, we switch off the linesearch in lbfgs).
+	//	return energy + (_k/2)*dot(_distances,_distances);
+	return 0;
 }
 
 void NEB::update_distances(std::vector< Array<double> > images, bool update_tangent)
@@ -248,22 +260,16 @@ void NEB::update_distances(std::vector< Array<double> > images, bool update_tang
 	// calculate the distances
 	for(size_t i=1; i<_nimages-1; ++i) {
 		Array<double> tau(_N);
-		// calculate distance to next image
-//		std::cout << "Calculating distances between images " << i << " and " << i+1 << std::endl;  // sn402
-//		std::cout << "tau_save" << tau_save << std::endl;
-//		std::cout << "tau_left" << tau_left << std::endl;
 
+		// calculate distance to next image
 		_distances[i] = _distance->get_distance(images[i], images[i+1], tau_left, tau_right);
 
 		_tau_left[i-1].assign(tau_save);
 		_tau_right[i-1].assign(tau_left);
-//std::cout << "tau_save" << tau_save << std::endl;
-//std::cout << "tau_left" << tau_left << std::endl;
+
 		// interpolate tangent based on previous step
 		interpolate_tangent(_tangents[i-1], _energies[i], _energies[i-1],
 							_energies[i+1], tau_save, tau_left);
-//		interpolate_tangent(_tangents[i-1], _energies[i], _energies[i-1],
-//							_energies[i+1], tau_save, tau_right);
 
 		// save latest distance calculation
 //		std::cout << "tau_overlap" << dot(tau_save,tau_right)/norm(tau_left)/norm(tau_right)<< std::endl;
@@ -308,58 +314,29 @@ void NEB::interpolate_tangent(Array<double> tau, double energy, double energy_le
 	// normalize tangent vector
 	double inv_norm = 1./norm(tau);
 	tau *= inv_norm;
-//	for(size_t i=0; i<tau.size(); ++i)
-//		tau[i] *= inv_norm;
 }
 
 void NEB::start()
 {
 	LBFGS *lbfgs = new LBFGS(this, this->_coords);
-//	lbfgs->set_max_f_rise(0.1);
 
 	_optimizer = lbfgs;
 
 }
 
-// Currently, lbfgs is the only optimiser implemented and is hard-coded into the NEB.
-// So we always call this function.
-// When a new optimiser is implemented, we will need to call a different parameters function
-// depending on which optimiser is being used.
-void NEB::set_lbfgs_parameters(int setM, double max_f_rise, double H0)
-{
-	LBFGS *lbfgs = (LBFGS*) _optimizer;
-	lbfgs->set_max_f_rise(max_f_rise);
-	lbfgs->set_H0(H0);
-	lbfgs->set_M(setM);
-}
-
+// Currently, lbfgs is the only optimiser implemented, so this is the only option to initialise the NEB.
 void NEB::start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0)
 {
+//	std::cout << "lbfgs parameters passed in:" << setM << "  " << max_f_rise << "  " << H0;
 	LBFGS *lbfgs = new LBFGS(this, this->_coords, rmstol, setM);
 	lbfgs->set_max_f_rise(max_f_rise);
 	lbfgs->set_H0(H0);
 	_optimizer = lbfgs;
 }
 
-void NEB::set_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
-		double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity)
-{
-	_optimizer->set_tol(rmstol);
-	_optimizer->set_maxstep(maxstep);
-	_optimizer->set_max_iter(maxiter);
-	_optimizer->set_iprint(iprint);
-	_optimizer->set_verbosity(verbosity);
-	_verbosity = verbosity;
-	_k = k_initial;
-	_adjust_k_tol = adjust_k_tol;
-	_adjust_k_factor = adjust_k_factor;
-	if(double_nudging>0) _double_nudging = true;
-
-}
 
 bool NEB::step()
 {
-//	std::cout << "Got to step call\n";  // sn402
 	_optimizer->one_iteration();
 	_coords.assign(_optimizer->get_x());
 	//jdf43	std::cout << "energy: " << _optimizer->get_f() << std::endl;

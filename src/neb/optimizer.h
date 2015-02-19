@@ -1,5 +1,5 @@
-#ifndef _PELE_OPTIMIZER_H__
-#define _PELE_OPTIMIZER_H__
+#ifndef _CPP_OPTIMIZER_H__
+#define _CPP_OPTIMIZER_H__
 
 #include "base_potential.h"
 #include "array.h"
@@ -13,10 +13,10 @@ using std::vector;
 using std::runtime_error;
 using std::cout;
 
-namespace pele{
+namespace cpp_neb{
 
 /**
- * this defines the basic interface for optimizers.  All pele optimizers
+ * this defines the basic interface for optimizers.  All cpp_neb optimizers
  * should derive from this class.
  */
 class Optimizer{
@@ -48,7 +48,7 @@ public:
 };
 
 /**
- * This defines the basic interface for optimizers.  All pele optimizers
+ * This defines the basic interface for optimizers.  All cpp_neb optimizers
  * should derive from this class.
  */
 class GradientOptimizer : public Optimizer {
@@ -57,7 +57,7 @@ protected :
     /**
      * A pointer to the object that computes the function and gradient
      */
-    pele::BasePotential * potential_;
+    cpp_neb::BasePotential * potential_;
 
     double tol_; /**< The tolerance for the rms gradient */
     double maxstep_; /**< The maximum step size */
@@ -86,8 +86,8 @@ protected :
     bool func_initialized_;
 
 public :
-    GradientOptimizer(pele::BasePotential * potential,
-          const pele::Array<double> x0,
+    GradientOptimizer(cpp_neb::BasePotential * potential,
+          const cpp_neb::Array<double> x0,
           double tol=1e-4)
     : potential_(potential),
       tol_(tol),
@@ -184,8 +184,6 @@ public :
     virtual bool stop_criterion_satisfied()
     {
         if (! func_initialized_) initialize_func_gradient();
-//        std::cout << "Determining whether to terminate" << std::endl; // sn402
-//        std::cout << "rms: " << rms_ << std::endl << "tolerance: " << tol_ << std::endl;
         return rms_ <= tol_;
     }
 
@@ -200,7 +198,6 @@ protected :
         nfev_ += 1;
 
         // pass the arrays to the potential
-        std::cout << "Calling energy gradient\n";
         func = potential_->get_energy_gradient(x, gradient);
     }
 

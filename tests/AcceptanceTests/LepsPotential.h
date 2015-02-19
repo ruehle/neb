@@ -3,7 +3,7 @@
 #include <neb/base_potential.h>
 #include <cmath>
 
-class LepsPotential : public pele::BasePotential
+class LepsPotential : public cpp_neb::BasePotential
 {
 public:
 	const double a = 0.05;
@@ -15,7 +15,7 @@ public:
 	const double dBC = 4.746;
 	const double dAC = 3.445;
 
-	double get_energy(pele::Array<double> r) override
+	double get_energy(cpp_neb::Array<double> r) override
 	{
 		double rAB = r[0];
 		double rBC = r[1];
@@ -36,7 +36,7 @@ public:
 			JABred*JACred);
 	}
 
-	double get_energy_gradient(pele::Array<double> r, pele::Array<double> grad)
+	double get_energy_gradient(cpp_neb::Array<double> r, cpp_neb::Array<double> grad)
 	{
 		double rAB = r[0];
 		double rBC = r[1];

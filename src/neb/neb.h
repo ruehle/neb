@@ -1,5 +1,5 @@
-#ifndef PELE_NEB_H
-#define PELE_NEB_H
+#ifndef CPP_NEB_H
+#define CPP_NEB_H
 
 #include <vector>
 #include "array.h"
@@ -7,7 +7,7 @@
 #include "base_distance.h"
 #include "optimizer.h"
 
-namespace pele {
+namespace cpp_neb {
 
 class NEB : public BasePotential
 {
@@ -28,9 +28,6 @@ public:
 	virtual ~NEB() {};
 
 	void set_path(std::vector< Array<double> > path);
-	void set_parameters(int double_nudging, double rmstol, double k_initial, double adjust_k_tol,
-			double adjust_k_factor, double maxstep, int maxiter, int iprint, int verbosity);
-	void set_lbfgs_parameters(int setM, double max_f_rise, double H0);
 
 	double get_energy(Array<double> coords);
 	double get_energy_gradient(Array<double> coords, Array<double> grad);
@@ -45,11 +42,14 @@ public:
 	void adjust_k();
 
 	void set_k(double k) { _k = k; }
+	void set_k_tol(double adjust_k_tol) {_adjust_k_tol = adjust_k_tol; }
+	void set_k_factor(double adjust_k_factor) {_adjust_k_factor = adjust_k_factor; }
 	void set_double_nudging(bool on_off) { _double_nudging = on_off; }
 	void set_verbosity(int verbosity) { _verbosity = verbosity; }
 
+	GradientOptimizer * get_optimizer() { return _optimizer; } // sn402
     Array<double> get_true_energies() { return _energies; }
-    Array<double> get_distancese() { return _distances; }
+    Array<double> get_distances() { return _distances; }
 	double get_rms();
 
 protected:

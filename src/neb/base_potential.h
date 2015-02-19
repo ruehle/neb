@@ -7,7 +7,7 @@
 #include <iostream>
 #include "array.h"
 
-namespace pele {
+namespace cpp_neb {
     /***
      * basic potential interface for native potentials
      */

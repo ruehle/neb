@@ -17,7 +17,7 @@
 #include "distance.h"
 #include <memory>
 
-namespace pele {
+namespace cpp_neb {
 
 /**
  * Pairwise interaction for lennard jones 

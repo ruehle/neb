@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(pele_tests)
+project(cpp_neb_tests)
 
 # if not specified by user, the standard build type is release
 if(NOT CMAKE_BUILD_TYPE)
@@ -16,7 +16,7 @@ ADD_DEFINITIONS(-Wall)
 #cmake_policy(SET CMP0015 NEW)
 
 
-# set the pele include directory
+# set the cpp_neb include directory
 set(neb_include ../../src/neb)
 include_directories(${neb_include})
 message("neb include directory ${neb_include}")
