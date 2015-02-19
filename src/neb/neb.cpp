@@ -325,11 +325,10 @@ void NEB::start()
 }
 
 // Currently, lbfgs is the only optimiser implemented, so this is the only option to initialise the NEB.
-void NEB::start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0)
+void NEB::start_with_lbfgs(double rmstol, int setM, double H0)
 {
 //	std::cout << "lbfgs parameters passed in:" << setM << "  " << max_f_rise << "  " << H0;
 	LBFGS *lbfgs = new LBFGS(this, this->_coords, rmstol, setM);
-	lbfgs->set_max_f_rise(max_f_rise);
 	lbfgs->set_H0(H0);
 	_optimizer = lbfgs;
 }

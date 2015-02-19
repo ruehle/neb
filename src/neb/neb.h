@@ -37,7 +37,7 @@ public:
 	Array<double> energies() { return _energies; }
 
 	void start(void);  // sn402: deprecated
-	void start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0);
+	void start_with_lbfgs(double rmstol, int setM, double H0);
 	bool step();
 	void adjust_k();
 
@@ -47,7 +47,7 @@ public:
 	void set_double_nudging(bool on_off) { _double_nudging = on_off; }
 	void set_verbosity(int verbosity) { _verbosity = verbosity; }
 
-	GradientOptimizer * get_optimizer() { return _optimizer; } // sn402
+	GradientOptimizer * get_optimizer() { return _optimizer; }
     Array<double> get_true_energies() { return _energies; }
     Array<double> get_distances() { return _distances; }
 	double get_rms();
