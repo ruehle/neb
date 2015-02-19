@@ -112,9 +112,9 @@ void neb_start()  // sn402: this should be superseded by a start function that s
 	g_neb->start();
 }
 
-void neb_start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0)  // sn402: added
+void neb_start_with_lbfgs(double rmstol, int setM, double H0)  // sn402: added
 {
-	g_neb->start_with_lbfgs(rmstol, setM, max_f_rise, H0);
+	g_neb->start_with_lbfgs(rmstol, setM, H0);
 }
 
 

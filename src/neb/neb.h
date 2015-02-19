@@ -37,7 +37,7 @@ public:
 	Array<double> energies() { return _energies; }  // sn402: added
 
 	void start(void);  // sn402: deprecated
-	void start_with_lbfgs(double rmstol, int setM, double max_f_rise, double H0);  // sn402: added
+	void start_with_lbfgs(double rmstol, int setM, double H0);  // sn402: added
 	bool step();
 	void adjust_k(); // sn402
 
