@@ -50,7 +50,7 @@ namespace cpp_neb {
 //				<< " E " << f_       // sn402: This isn't a real energy - see note in neb.cpp
 				<< " rms " << rms_
 				<< " nfev " << nfev_
-				<< " stepsize " << stepsize << "\n";
+				<< " stepsize " << stepsize << std::endl;
 		}
 		iter_number_ += 1;
 	}

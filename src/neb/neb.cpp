@@ -208,6 +208,9 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
             // add the spring force
             image_gradient += spring;
 		}
+		else {
+			std::cout << "Warning: double nudging is not set.\n";
+		}
 
 		// spring force
 		double d = _k * (_distances[i-1] - _distances[i]);
