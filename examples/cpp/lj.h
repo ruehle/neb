@@ -15,7 +15,9 @@
 
 #include "simple_pairwise_potential.h"
 #include "distance.h"
-#include <memory>
+//#include <memory>
+
+#include "shared_ptr.hpp"
 
 namespace cpp_neb {
 
@@ -74,7 +76,7 @@ class LJ : public SimplePairwisePotential< lj_interaction > {
     public:
         LJ(double C6, double C12)
             : SimplePairwisePotential< lj_interaction > (
-                    std::make_shared<lj_interaction>(C6, C12) ) 
+                    shared_ptr<lj_interaction>( new lj_interaction(C6, C12) ))
     {}
 };
 
@@ -84,10 +86,10 @@ class LJ : public SimplePairwisePotential< lj_interaction > {
 class LJPeriodic : public SimplePairwisePotential< lj_interaction, periodic_distance<3> > {
 public:
     LJPeriodic(double C6, double C12, Array<double> const boxvec)
-        : SimplePairwisePotential< lj_interaction, periodic_distance<3>> (
-                std::make_shared<lj_interaction>(C6, C12),
-                std::make_shared<periodic_distance<3>>(boxvec)
-                ) 
+        : SimplePairwisePotential< lj_interaction, periodic_distance<3> > (
+                shared_ptr<lj_interaction>( new lj_interaction(C6, C12)),
+                shared_ptr<periodic_distance<3> >( new periodic_distance<3>(boxvec))
+                )
     {}
 };
 

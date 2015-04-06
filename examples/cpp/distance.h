@@ -42,7 +42,7 @@ class CartesianNEBDistance : public BaseDistance {
     virtual double get_distance(Array<double> left, Array<double> right,
                                 Array<double> gradient_left, Array<double> gradient_right)
     {
-        auto dr = left.copy();
+        Array<double> dr = left.copy();
         dr -= right;
         double d = norm(dr);
         for (size_t i = 0; i < left.size(); ++i) {

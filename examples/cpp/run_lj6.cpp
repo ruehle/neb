@@ -68,7 +68,7 @@ void print_EofS(Array<double> energies,
 
 int main()
 {
-    auto v = vector_from_file("../lj13_m1");
+    std::vector<double> v = vector_from_file("../lj13_m1");
     Array<double> xi = Array<double>(v).copy();
     v = vector_from_file("../lj13_m2");
     Array<double> xf = Array<double>(v).copy();
@@ -85,7 +85,7 @@ int main()
 
     cpp_neb::NEB neb(&lj, &neb_dist);
 
-    auto path = linear_interpoloation(xi, xf, 30);
+    std::vector< Array<double> > path = linear_interpoloation(xi, xf, 30);
  
     for(int i=0; i<30; i++) {
       for(int j=0; j<13; j++)

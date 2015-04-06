@@ -4,7 +4,9 @@
 #include "base_potential.h"
 #include "array.h"
 #include "distance.h"
-#include <memory>
+//#include <memory>
+
+#include "shared_ptr.hpp"
 
 namespace cpp_neb
 {
@@ -23,14 +25,14 @@ class SimplePairwisePotential : public BasePotential
 {
 protected:
     static const size_t _ndim = distance_policy::_ndim;
-    std::shared_ptr<pairwise_interaction> _interaction;
-    std::shared_ptr<distance_policy> _dist;
+    shared_ptr<pairwise_interaction> _interaction;
+    shared_ptr<distance_policy> _dist;
 
-    SimplePairwisePotential( std::shared_ptr<pairwise_interaction> interaction,
-            std::shared_ptr<distance_policy> dist=NULL) 
+    SimplePairwisePotential( shared_ptr<pairwise_interaction> interaction,
+            shared_ptr<distance_policy> dist=shared_ptr<distance_policy>(new distance_policy()))
         : _interaction(interaction), _dist(dist)
     {
-        if(_dist == NULL) _dist = std::make_shared<distance_policy>();
+//        if(_dist == NULL) _dist = std::make_shared<distance_policy>();
     }
 
 public:

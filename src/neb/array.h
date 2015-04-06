@@ -5,10 +5,12 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <memory>
+//#include <memory>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
+
+#include "shared_ptr.hpp"
 
 namespace cpp_neb {
 
@@ -75,7 +77,7 @@ template<typename dtype>
 class Array
 {
 protected:
-    std::shared_ptr<_ArrayMemory<dtype> > _memory;
+    shared_ptr<_ArrayMemory<dtype> > _memory;
     dtype * _data; /**< _data will usually be a copy of memory->data().  If this
                         is a view of another array then _data will be
                         _memory->data() + ibegin */
@@ -285,8 +287,8 @@ public:
             throw std::runtime_error("operator+=: arrays must have the same size");
         }
         const_iterator iter = rhs.begin();
-        for (dtype & val : *this) {
-            val += *iter;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) += *iter;
             ++iter;
         }
         return *this;
@@ -294,8 +296,8 @@ public:
 
     Array<dtype> &operator+=(const dtype &rhs)
     {
-        for (dtype & val : (*this)) {
-            val += rhs;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) += rhs;
         }
         return *this;
     }
@@ -306,8 +308,8 @@ public:
             throw std::runtime_error("operator-=: arrays must have the same size");
         }
         const_iterator iter = rhs.begin();
-        for (dtype & val : *this) {
-            val -= *iter;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) -= *iter;
             ++iter;
         }
         return *this;
@@ -315,8 +317,8 @@ public:
 
     Array<dtype> &operator-=(const dtype &rhs)
     {
-        for (dtype & val : (*this)) {
-            val -= rhs;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) -= rhs;
         }
         return *this;
     }
@@ -327,8 +329,8 @@ public:
             throw std::runtime_error("operator*=: arrays must have the same size");
         }
         const_iterator iter = rhs.begin();
-        for (dtype & val : *this) {
-            val *= *iter;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) *= *iter;
             ++iter;
         }
         return *this;
@@ -336,8 +338,8 @@ public:
 
     Array<dtype> &operator*=(const dtype &rhs)
     {
-        for (dtype & val : (*this)) {
-            val *= rhs;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) *= rhs;
         }
         return *this;
     }
@@ -354,8 +356,8 @@ public:
             throw std::runtime_error("operator/=: arrays must have the same size");
         }
         const_iterator iter = rhs.begin();
-        for (dtype & val : *this) {
-            val /= *iter;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) /= *iter;
             ++iter;
         }
         return *this;
@@ -363,8 +365,8 @@ public:
 
     Array<dtype> &operator/=(const  dtype &rhs)
     {
-        for (dtype & val : (*this)) {
-            val /= rhs;
+        for (iterator val = begin(); val != end();  ++val) {
+            (*val) /= rhs;
         }
         return *this;
     }
