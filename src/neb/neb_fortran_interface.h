@@ -23,7 +23,7 @@ extern "C" {
 
 	void neb_start();  // sn402: this should be superseded by a start function that specifies
 	// the desired optimizer (currently only lbfgs is coded).
-	void neb_start_with_lbfgs(double rmstol, int setM, double H0); // sn402 added
+	void neb_start_with_lbfgs(double rmstol, int setM, double H0);
 	bool neb_step();
 	void neb_adjust_k();
 	double neb_rms();

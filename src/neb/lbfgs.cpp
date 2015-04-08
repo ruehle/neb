@@ -76,7 +76,6 @@ namespace cpp_neb {
 			ys = 1.;
 		}
 		rho_[klocal] = 1. / ys;
-//		cout << "rho " << rho_ << std::endl;
 
 		double yy = dot(y_[klocal], y_[klocal]);
 		if (yy == 0.) {
@@ -86,7 +85,6 @@ namespace cpp_neb {
 			yy = 1.;
 		}
 		H0_ = ys / yy;
-//		cout << "H0 " << H0_ << std::endl;
 		// increment k
 		k_ += 1;
 	}
@@ -102,9 +100,7 @@ namespace cpp_neb {
 			}
 			return;
 		}
-//		std::cout << "Gradient at start of compute step:\n"<< std::endl;  // sn402
-//		for(int j2 =0 ; j2<step.size(); j2+=3)
-//			std::cout<<g_[j2]<<"\t"<<g_[j2+1]<<"\t"<<g_[j2+2]<<std::endl;
+
 		// copy the gradient into step
 		step.assign(g_);
 		int jmin = std::max(0, k_ - M_);
@@ -116,7 +112,6 @@ namespace cpp_neb {
 		// loop backwards through the memory
 		for (int j = jmax - 1; j >= jmin; --j){
 			i = j % M_;
-			//cout << "    i " << i << " j " << j << "\n";
 			alpha[i] = rho_[i] * dot(s_[i], step);
 			for (size_t j2 = 0; j2 < step.size(); ++j2){
 				step[j2] -= alpha[i] * y_[i][j2];
@@ -128,7 +123,6 @@ namespace cpp_neb {
 		// loop forwards through the memory
 		for (int j = jmin; j < jmax; ++j){
 			i = j % M_;
-			//cout << "    i " << i << " j " << j << "\n";
 			beta = rho_[i] * dot(y_[i], step);
 			for (size_t j2 = 0; j2 < step.size(); ++j2){
 				step[j2] += s_[i][j2] * (alpha[i] - beta);
@@ -195,10 +189,6 @@ namespace cpp_neb {
 				cout << "warning: the line search backtracked too many times\n";
 			}
 		}
-
-//		std::cout<<"Gradient change after lbfgs step:\n";
-//		for(int j2 =0 ; j2<step.size(); j2+=3)
-//			std::cout<<gnew[j2]-g_[j2]<<"\t"<<gnew[j2+1]-g_[j2+1]<<"\t"<<gnew[j2+2]-g_[j2+2]<<std::endl;
 
 		x_.assign(xnew);
 		g_.assign(gnew);

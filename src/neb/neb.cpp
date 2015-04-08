@@ -80,7 +80,6 @@ void NEB::adjust_k()  // sn402
 	for (size_t i=0; i < _distances.size(); i++) {
 		double deviation = fabs((_distances[i]-average_d)/average_d);
 		ave_dev += deviation;
-//		std::cout << deviation << std::endl;
 	}
 	ave_dev /= _distances.size();
 
@@ -124,7 +123,9 @@ double NEB::get_energy(Array<double> coords)
 	for(size_t i=0; i<_images.size(); ++i) {
 		energy += _potential->get_energy(images[i]);
 	}
-	return energy;
+	// See comment at the end of get_energy_gradient for an explanation of why this is turned off.
+//	return energy;
+	return 0;
 }
 
 double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
@@ -135,7 +136,6 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
 	if (coords.size() != _N * _nimages) {
 		throw std::runtime_error("coords has the wrong size");
 	}
-//	std::cout << "cpp energy gradient function\n";  // sn402
 
 	// first wrap coordinates for convenient access
 	std::vector< Array<double> > images
@@ -183,7 +183,6 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
             for(size_t j=0; j<_N; ++j) {
                 spring[j] = _k * (_tau_left[i-1][j] + _tau_right[i-1][j]);
             }
-//            E_neb += dot(spring, spring)/(2*_k);  // sn402: spring energy  - this doesn't seem to work
 
             // first project out parallel part since this this is treated separately
             // in the normal nudging
@@ -203,7 +202,7 @@ double NEB::get_energy_gradient(Array<double> coords, Array<double> grad)
             image_gradient += spring;
 		}
 		else {
-			std::cout << "Warning: double nudging is not set.\n";
+			std::cout << "Warning: double nudging is not set" << std::endl;
 		}
 
 		// spring force
@@ -330,7 +329,6 @@ void NEB::start()
 // Currently, lbfgs is the only optimiser implemented, so this is the only option to initialise the NEB.
 void NEB::start_with_lbfgs(double rmstol, int setM, double H0)
 {
-//	std::cout << "lbfgs parameters passed in:" << setM << "  " << max_f_rise << "  " << H0;
 	LBFGS *lbfgs = new LBFGS(this, this->_coords, rmstol, setM);
 	lbfgs->set_H0(H0);
 	_optimizer = lbfgs;
