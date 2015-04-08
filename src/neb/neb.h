@@ -34,12 +34,12 @@ public:
 
 
 	std::vector< Array<double> > &images() { return _images; }
-	Array<double> energies() { return _energies; }  // sn402: added
+	Array<double> energies() { return _energies; }
 
 	void start(void);  // sn402: deprecated
-	void start_with_lbfgs(double rmstol, int setM, double H0);  // sn402: added
+	void start_with_lbfgs(double rmstol, int setM, double H0);
 	bool step();
-	void adjust_k(); // sn402
+	void adjust_k();
 
 	void set_k(double k) { _k = k; }
 	void set_k_tol(double adjust_k_tol) {_adjust_k_tol = adjust_k_tol; }
@@ -47,7 +47,7 @@ public:
 	void set_double_nudging(bool on_off) { _double_nudging = on_off; }
 	void set_verbosity(int verbosity) { _verbosity = verbosity; }
 
-	GradientOptimizer * get_optimizer() { return _optimizer; } // sn402
+	GradientOptimizer * get_optimizer() { return _optimizer; }
     Array<double> get_true_energies() { return _energies; }
     Array<double> get_distances() { return _distances; }
 	double get_rms();

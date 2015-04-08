@@ -51,8 +51,6 @@ void neb_cleanup()
 
 void neb_initialize_path(int nimages, int num_coords_per_image)
 {
-//	std::cout << "nimages in initialise_path: " << nimages << std::endl;
-//	std::cout << "number of coords per image: " << num_coords_per_image << std::endl;
 	vector < Array<double> > path;
 	Array<double> image(num_coords_per_image, 0);
 	for (int i = 0; i < nimages; ++i) {
@@ -112,7 +110,7 @@ void neb_start()  // sn402: this should be superseded by a start function that s
 	g_neb->start();
 }
 
-void neb_start_with_lbfgs(double rmstol, int setM, double H0)  // sn402: added
+void neb_start_with_lbfgs(double rmstol, int setM, double H0)
 {
 	g_neb->start_with_lbfgs(rmstol, setM, H0);
 }
