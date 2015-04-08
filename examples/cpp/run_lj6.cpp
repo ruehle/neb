@@ -101,7 +101,7 @@ int main()
 //        cout << "energy_path " << lj.get_energy(x) << std::endl;
 //    }
 
-    neb.start_with_lbfgs(1e-3, 10, 1., .01);
+    neb.start_with_lbfgs(1e-3, 10, .01);
 
     for (size_t i = 0; i < 500; ++i) {
         bool success = neb.step();
