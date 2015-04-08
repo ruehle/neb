@@ -20,6 +20,7 @@ namespace pele {
 		virtual double get_distance(Array<double> left, Array<double> right,
 							Array<double> gradient_left, Array<double> gradient_right) = 0;
 	};
+
 	class DistanceWrapper : public BaseDistance
 	{
 	public:

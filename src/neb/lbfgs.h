@@ -23,9 +23,17 @@ namespace pele{
 							 */
 
 		// places to store the lbfgs memory
+        /** s_ stores the changes in position for the previous M steps */
 		std::vector<Array<double> > s_;
+        /** y_ stores the changes in gradient for the previous M steps */
 		std::vector<Array<double> > y_;
+        /** rho stores 1/dot(y_, s_) for the previous M steps */
 		Array<double> rho_;
+        /**
+         * H0 is the initial estimate for the diagonal component of the inverse Hessian.
+         * It is an input parameter, but the estimate is improved during the run.
+         * H0 is a scalar, which means that we use the same value for all degrees of freedom.
+         */
 		double H0_;
 		int k_; /**< Counter for how many times the memory has been updated */
 
@@ -43,7 +51,7 @@ namespace pele{
 		/**
 		 * Destructor
 		 */
-		~LBFGS() {}
+		virtual ~LBFGS() {}
 
 		/**
 		 * Do one iteration iteration of the optimization algorithm
@@ -51,18 +59,20 @@ namespace pele{
 		void one_iteration();
 
 		// functions for setting the parameters
-		void set_H0(double H0)
+		inline void set_H0(double H0)
 		{
 			if (iter_number_ > 0){
-				cout << "warning: setting H0 after the first iteration.\n";
+                std::cout << "warning: setting H0 after the first iteration.\n";
 			}
 			H0_ = H0;
 		}
-		void set_max_f_rise(double max_f_rise) { max_f_rise_ = max_f_rise; }
-		void set_M(int setM) { M_ = setM; }
+
+		inline void set_max_f_rise(double max_f_rise) { max_f_rise_ = max_f_rise; }
+
+		inline void set_M(int setM) { M_ = setM; }
 
 		// functions for accessing the results
-		double get_H0() { return H0_; }
+		inline double get_H0() const { return H0_; }
 
 	private:
 

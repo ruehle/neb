@@ -105,9 +105,7 @@ namespace pele {
 //		for(int j2 =0 ; j2<step.size(); j2+=3)
 //			std::cout<<g_[j2]<<"\t"<<g_[j2+1]<<"\t"<<g_[j2+2]<<std::endl;
 		// copy the gradient into step
-		for (size_t j2 = 0; j2 < step.size(); ++j2){
-			step[j2] = g_[j2];
-		}
+		step.assign(g_);
 		int jmin = std::max(0, k_ - M_);
 		int jmax = k_;
 		int i;
@@ -124,9 +122,7 @@ namespace pele {
 			}
 		}
 		// scale the step size by H0
-		for (size_t j2 = 0; j2 < step.size(); ++j2){
-			step[j2] *= H0_;
-		}
+		step *= H0_;
 
 		// loop forwards through the memory
 		for (int j = jmin; j < jmax; ++j){
@@ -139,9 +135,7 @@ namespace pele {
 		}
 
 		// invert the step to point downhill
-		for (size_t j2 = 0; j2 < x_.size(); ++j2){
-			step[j2] *= -1;
-		}
+		step *= -1;
 
 	}
 
@@ -205,10 +199,9 @@ namespace pele {
 //		for(int j2 =0 ; j2<step.size(); j2+=3)
 //			std::cout<<gnew[j2]-g_[j2]<<"\t"<<gnew[j2+1]-g_[j2+1]<<"\t"<<gnew[j2+2]-g_[j2+2]<<std::endl;
 
-		for (size_t i = 0; i < x_.size(); ++i){
-			x_[i] = xnew[i];
-			g_[i] = gnew[i];
-		}
+		x_.assign(xnew);
+		g_.assign(gnew);
+
 		f_ = fnew;
 		rms_ = norm(gnew) / sqrt(gnew.size());
 
