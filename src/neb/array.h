@@ -260,8 +260,8 @@ public:
      */
     inline void free()
     {
-        _memory = std::make_shared<_ArrayMemory<dtype> >();
-        _data = _memory->data();
+    	_memory = cpp_neb::shared_ptr<_ArrayMemory<dtype> >( new _ArrayMemory<dtype>() );
+    	_data = _memory->data();
         _size = _memory->size();
     }
 
